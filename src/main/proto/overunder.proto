@@ -1,0 +1,64 @@
+  syntax = "proto3";
+
+  package over_under;
+
+  option java_multiple_files = true;
+  option java_package = "com.example.over_under";
+  option java_outer_classname = "OverUnderProto";
+
+  service OverUnderService {
+    rpc JoinGame(JoinGameReq) returns (JoinGameRes);
+    rpc GetCurrentRound (Empty) returns (RoundRes);
+    rpc PlaceBet (BetReq) returns (BetRes);
+    rpc CreateGame(Empty) returns(CreateGameRes);
+    rpc StartGame(StartGameReq) returns (StartGameRes);
+    rpc StopGame(StopGameReq) returns(StopGameRes);
+  }
+
+  message Empty {}
+  message StartGameReq{
+    string gameId = 1;
+  }
+  message StartGameRes{
+    string result = 1;
+  }
+  message StopGameReq{
+    string gameId = 1;
+  }
+  message StopGameRes{
+    string result = 1;
+  }
+  message CreateGameRes{
+    string gameId = 1;
+  }
+  message JoinGameReq{
+    string userId = 1;
+    string gameId = 2;
+  }
+  message JoinGameRes{
+    string result = 1;
+  }
+
+  message BetReq {
+    string userId = 1;
+    string gameId = 2;
+    string choice = 3;
+    int64 amount = 4;
+  }
+
+  message BetRes {
+    string message = 1;
+  }
+
+  message RoundRes {
+    int32 id = 1;
+    string status = 2;
+    int32 rollResult = 3;
+    repeated BetResponseItem bets = 4;
+  }
+
+  message BetResponseItem {
+    string player = 1;
+    string choice = 2;
+    int32 amount = 3;
+  }
