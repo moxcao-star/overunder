@@ -2,6 +2,7 @@ package com.example.overunder.gamerunner;
 
 import com.example.overunder.model.*;
 import com.example.overunder.model.event.EndSessionEvent;
+import com.example.overunder.model.event.RollEvent;
 import com.example.overunder.model.event.StartSessionEvent;
 import com.example.overunder.service.RollingService;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.Map;
 
 
@@ -23,7 +25,6 @@ final class Dealer {
 
     @EventListener
     void execute(CountSec countSec) {
-        countSec = null;
         gameBoard.forEach((gameId, game) -> {
             switch (game.getCurrentStatus()) {
                 case BETTING -> handleBetting(game);
@@ -40,6 +41,7 @@ final class Dealer {
         eventPublisher.publishEvent(StartSessionEvent.builder()
                 .gameId(game.getGameId())
                 .sessionId(game.getSession().get())
+                .startTime(Instant.now().toString())
                 .build());
     }
 
@@ -59,7 +61,15 @@ final class Dealer {
         if (game.getRollingResult() != Side.UNKNOWN) {
             return;
         }
-        game.setRollingResult(rollingService.roll());
+        Side rollingResult = rollingService.roll();
+        eventPublisher.publishEvent(RollEvent
+                .builder()
+                .gameId(game.getGameId())
+                .sessionId(String.valueOf(game.getSession().get()))
+                .result(rollingResult)
+                .rollingTime(Instant.now().toString())
+                .build());
+        game.setRollingResult(rollingResult);
 
     }
 
@@ -70,6 +80,7 @@ final class Dealer {
             eventPublisher.publishEvent(EndSessionEvent.builder()
                     .gameId(game.getGameId())
                     .sessionId(game.getSession().get())
+                    .endTime(Instant.now().toString())
                     .build());
 
             log.info("Game:[{}] is in PREPARE time", game.getGameId());

@@ -10,9 +10,14 @@ import java.nio.file.Paths;
 
 @Component
 final class BetResultWriter extends Writer<BetResultEvent> {
-
-    public BetResultWriter(ObjectMapper mapper) {
+    BetResultWriter(ObjectMapper mapper) {
         super(mapper);
+    }
+
+
+    @Override
+    protected boolean batchingFlush() {
+        return false;
     }
 
     @Override

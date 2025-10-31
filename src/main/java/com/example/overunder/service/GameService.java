@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.grpc.server.service.GrpcService;
 
+import java.time.Instant;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +67,8 @@ public class GameService extends OverUnderServiceGrpc.OverUnderServiceImplBase {
                 .userId(userId)
                 .amount(amount)
                 .side(side)
-        .build());
+                .placeTime(Instant.now().toString())
+                .build());
         responseObserver.onNext(BetRes.newBuilder().setMessage("Place Bet Successfully").build());
         responseObserver.onCompleted();
     }

@@ -10,8 +10,14 @@ import java.nio.file.Paths;
 
 @Component
 final class PlaceBetWriter extends Writer<PlaceBetEvent> {
+
     PlaceBetWriter(ObjectMapper mapper) {
         super(mapper);
+    }
+
+    @Override
+    protected boolean batchingFlush() {
+        return true;
     }
 
     @Override

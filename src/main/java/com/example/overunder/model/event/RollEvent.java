@@ -5,15 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.time.Instant;
-
 @Data
 @Builder
-public class PlaceBetEvent implements Serializable {
+public class RollEvent implements Serializable {
     private String gameId;
     private String sessionId;
-    private String userId;
-    private Long amount;
-    private Side side;
-    private String placeTime;
+    private Side result;
+    private String rollingTime;
 }

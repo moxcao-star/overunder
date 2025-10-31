@@ -14,6 +14,11 @@ final class StartSessionWriter extends Writer<StartSessionEvent>{
     }
 
     @Override
+    protected boolean batchingFlush() {
+        return false;
+    }
+
+    @Override
     protected String toJson(StartSessionEvent result) throws JsonProcessingException {
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(result);
     }
