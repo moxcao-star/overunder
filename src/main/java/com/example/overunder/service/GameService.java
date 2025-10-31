@@ -52,6 +52,7 @@ public class GameService extends OverUnderServiceGrpc.OverUnderServiceImplBase {
                     .asRuntimeException());
             return;
         }
+        /// ----
         Map<String, List<Game.BetInfo>> usersOnGame = game.getUsersOnGame();
         if (!usersOnGame.containsKey(userId)) {
             usersOnGame.put(userId, new LinkedList<>());

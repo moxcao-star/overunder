@@ -32,7 +32,7 @@ abstract class Writer<T extends Serializable> {
 
     protected Writer(ObjectMapper mapper) {
         this.mapper = mapper;
-        scheduler.scheduleAtFixedRate(this::consume, 10,10, TimeUnit.SECONDS);
+        scheduler.scheduleAtFixedRate(this::consume, 3,3, TimeUnit.SECONDS);
     }
 
     private void consume() {
