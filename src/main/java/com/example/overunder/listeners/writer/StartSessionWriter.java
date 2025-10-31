@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 @Component
-public class StartSessionWriter extends Writer<StartSessionEvent>{
+final class StartSessionWriter extends Writer<StartSessionEvent>{
     StartSessionWriter(ObjectMapper mapper) {
         super(mapper);
     }

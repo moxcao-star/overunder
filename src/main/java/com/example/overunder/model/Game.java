@@ -12,35 +12,37 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Setter
 public class Game {
     private String gameId;
-    private AtomicInteger gameSession = new AtomicInteger(0);
+    private AtomicInteger session = new AtomicInteger(0);
     private Status currentStatus;
     private AtomicInteger bettingTime = new AtomicInteger(20);
     private AtomicInteger rollingTime = new AtomicInteger(3);
     private AtomicInteger calculatingTime = new AtomicInteger(2);
-    private Bet rollingResult = Bet.UNKNOWN;
+    private Side rollingResult = Side.UNKNOWN;
     private Map<String, List<BetInfo>> usersOnGame = new ConcurrentHashMap<>();
 
     @Getter
     @Setter
     public static class BetInfo {
-        private Bet bet = Bet.UNKNOWN;
+        private Side side = Side.UNKNOWN;
         private long betAmount = 0L;
     }
 
-    public int bettingCountdown(){
+    public int bettingCountdown() {
         return bettingTime.decrementAndGet();
     }
-    public int rollingCountdown(){
+
+    public int rollingCountdown() {
         return rollingTime.decrementAndGet();
     }
-    public int calculatingCountdown(){
+
+    public int calculatingCountdown() {
         return calculatingTime.decrementAndGet();
     }
 
     public static Game copyFrom(Game game) {
         Game gameCopy = new Game();
         gameCopy.gameId = game.gameId;
-        gameCopy.gameSession = new AtomicInteger(game.gameSession.get());
+        gameCopy.session = new AtomicInteger(game.session.get());
         gameCopy.currentStatus = game.currentStatus;
         gameCopy.rollingResult = game.rollingResult;
         gameCopy.bettingTime = new AtomicInteger(game.bettingTime.get());
@@ -54,7 +56,7 @@ public class Game {
             List<BetInfo> copiedList = originalList.stream()
                     .map(original -> {
                         BetInfo copy = new BetInfo();
-                        copy.setBet(original.getBet());
+                        copy.setSide(original.getSide());
                         copy.setBetAmount(original.getBetAmount());
                         return copy;
                     })
@@ -67,9 +69,10 @@ public class Game {
 
         return gameCopy;
     }
-    public static void cleanGame(Game game){
-        game.rollingResult = Bet.UNKNOWN;
-        game.gameSession.incrementAndGet();
+
+    public static void cleanGame(Game game) {
+        game.rollingResult = Side.UNKNOWN;
+        game.session.incrementAndGet();
         game.bettingTime = new AtomicInteger(20);
         game.rollingTime = new AtomicInteger(3);
         game.calculatingTime = new AtomicInteger(2);

@@ -3,13 +3,15 @@ package com.example.overunder.service;
 import com.example.over_under.BetReq;
 import com.example.over_under.BetRes;
 import com.example.over_under.OverUnderServiceGrpc;
-import com.example.overunder.model.Bet;
+import com.example.overunder.model.Side;
 import com.example.overunder.model.Game;
+import com.example.overunder.model.event.PlaceBetEvent;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.grpc.server.service.GrpcService;
 
 import java.util.LinkedList;
@@ -23,6 +25,7 @@ import static com.example.overunder.model.Status.BETTING;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class GameService extends OverUnderServiceGrpc.OverUnderServiceImplBase {
     private final Map<String, Game> gameBoard;
+    private final ApplicationEventPublisher publisher;
 
     @Override
     public void placeBet(BetReq request, StreamObserver<BetRes> responseObserver) {
@@ -30,9 +33,9 @@ public class GameService extends OverUnderServiceGrpc.OverUnderServiceImplBase {
         String gameId = request.getGameId();
         String userId = request.getUserId();
         long amount = request.getAmount();
-        Bet bet;
+        Side side;
         try {
-            bet = Bet.valueOf(request.getChoice());
+            side = Side.valueOf(request.getChoice());
         } catch (IllegalArgumentException e) {
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("Wrong Bet type").asRuntimeException());
             return;
@@ -55,8 +58,15 @@ public class GameService extends OverUnderServiceGrpc.OverUnderServiceImplBase {
         List<Game.BetInfo> betInfos = usersOnGame.get(userId);
         Game.BetInfo betInfo = new Game.BetInfo();
         betInfo.setBetAmount(amount);
-        betInfo.setBet(bet);
+        betInfo.setSide(side);
         betInfos.add(betInfo);
+        publisher.publishEvent(PlaceBetEvent.builder()
+                .gameId(gameId)
+                .sessionId(String.valueOf(game.getSession().get()))
+                .userId(userId)
+                .amount(amount)
+                .side(side)
+        .build());
         responseObserver.onNext(BetRes.newBuilder().setMessage("Place Bet Successfully").build());
         responseObserver.onCompleted();
     }

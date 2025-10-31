@@ -2,7 +2,7 @@ game-board:
   games:
     game1:
       gameId: "game1"
-      currentStatus: BETTING
+      currentStatus: PREPARE
       bettingTime: 20
       rollingTime: 3
       calculatingTime: 2
@@ -10,7 +10,7 @@ game-board:
       usersOnGame: {}
     game2:
       gameId: "game2"
-      currentStatus: BETTING
+      currentStatus: PREPARE
       bettingTime: 20
       rollingTime: 3
       calculatingTime: 2
@@ -18,7 +18,7 @@ game-board:
       usersOnGame: {}
     game3:
       gameId: "game3"
-      currentStatus: BETTING
+      currentStatus: PREPARE
       bettingTime: 20
       rollingTime: 3
       calculatingTime: 2

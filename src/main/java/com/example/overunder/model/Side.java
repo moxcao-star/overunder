@@ -1,6 +1,6 @@
 package com.example.overunder.model;
 
-public enum Bet {
+public enum Side {
     OVER,
     UNDER,
     UNKNOWN,;

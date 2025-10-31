@@ -7,5 +7,5 @@ public enum Status {
     BETTING,
     ROLLING,
     CALCULATING,
-    NOT_STARTED,;
+    PREPARE,
 }

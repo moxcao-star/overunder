@@ -1,7 +1,6 @@
 package com.example.overunder.gamerunner;
 
 import com.example.overunder.model.*;
-//import com.example.overunder.scheduler.CustomScheduler;
 import com.example.overunder.model.event.EndSessionEvent;
 import com.example.overunder.model.event.StartSessionEvent;
 import com.example.overunder.service.RollingService;
@@ -30,8 +29,18 @@ final class Dealer {
                 case BETTING -> handleBetting(game);
                 case CALCULATING -> handleCalculating(game);
                 case ROLLING -> handleRolling(game);
+                case PREPARE -> handlePrepare(game);
             }
         });
+    }
+
+    private void handlePrepare(Game game) {
+        Game.cleanGame(game);
+        game.setCurrentStatus(Status.BETTING);
+        eventPublisher.publishEvent(StartSessionEvent.builder()
+                .gameId(game.getGameId())
+                .sessionId(game.getSession().get())
+                .build());
     }
 
     private void handleBetting(Game game) {
@@ -47,7 +56,7 @@ final class Dealer {
             log.info("Game: [{}] is in CALCULATING time", game.getGameId());
             return;
         }
-        if (game.getRollingResult() != Bet.UNKNOWN) {
+        if (game.getRollingResult() != Side.UNKNOWN) {
             return;
         }
         game.setRollingResult(rollingService.roll());
@@ -60,17 +69,11 @@ final class Dealer {
             eventPublisher.publishEvent(copiedGame);
             eventPublisher.publishEvent(EndSessionEvent.builder()
                     .gameId(game.getGameId())
-                    .sessionId(game.getGameSession().get())
+                    .sessionId(game.getSession().get())
                     .build());
-            Game.cleanGame(game);
-            game.setCurrentStatus(Status.BETTING);
-            eventPublisher.publishEvent(StartSessionEvent.builder()
-                    .gameId(game.getGameId())
-                    .sessionId(game.getGameSession().get())
-                    .build());
-            log.info("Game:[{}] is in BETTING time", game.getGameId());
-            return;
+
+            log.info("Game:[{}] is in PREPARE time", game.getGameId());
+            game.setCurrentStatus(Status.PREPARE);
         }
-        game.setCurrentStatus(Status.CALCULATING);
     }
 }

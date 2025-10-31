@@ -1,6 +1,6 @@
 package com.example.overunder.model.event;
 
-import com.example.overunder.model.Bet;
+import com.example.overunder.model.Side;
 import com.example.overunder.model.Game;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,12 +25,12 @@ public class BetResultEvent implements Serializable {
         usersOnGame.forEach((userId, bets) -> {
             List<BetDetail> details = bets.stream().map(betInfo -> {
                 BetDetail detail = new BetDetail();
-                if (game.getRollingResult() == betInfo.getBet()) {
+                if (game.getRollingResult() == betInfo.getSide()) {
                     detail.setChangeAmount(betInfo.getBetAmount());
                 } else {
                     detail.setChangeAmount(-betInfo.getBetAmount());
                 }
-                detail.setBet(betInfo.getBet());
+                detail.setSide(betInfo.getSide());
                 detail.setBetAmount(betInfo.getBetAmount());
                 return detail;
             }).toList();
@@ -38,14 +38,14 @@ public class BetResultEvent implements Serializable {
         });
         return BetResultEvent.builder()
                 .gameId(game.getGameId())
-                .gameSessionId(game.getGameSession().toString())
+                .gameSessionId(game.getSession().toString())
                 .betDetails(betDetails)
                 .build();
     }
 
     @Data
     public static class BetDetail implements Serializable {
-        private Bet bet;
+        private Side side;
         private Long betAmount;
         private Long changeAmount;
     }

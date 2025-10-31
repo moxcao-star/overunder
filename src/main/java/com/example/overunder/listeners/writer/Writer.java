@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
 @Slf4j
 abstract class Writer<T extends Serializable> {
     protected final ObjectMapper mapper;
@@ -25,7 +26,7 @@ abstract class Writer<T extends Serializable> {
     }
 
     @EventListener
-    protected void write(T result){
+    protected void write(T result) {
         try {
             writeLog(toJson(result));
         } catch (JsonProcessingException e) {
@@ -38,7 +39,7 @@ abstract class Writer<T extends Serializable> {
 
     protected abstract Path getLogPath();
 
-    protected void writeLog(String json){
+    protected void writeLog(String json) {
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         String line = String.format("\"[%s]\" %s%n", timestamp, json);
 
