@@ -5,6 +5,7 @@ import com.example.overunder.model.event.EndSessionEvent;
 import com.example.overunder.model.event.RollEvent;
 import com.example.overunder.model.event.StartSessionEvent;
 import com.example.overunder.service.RollingService;
+import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;

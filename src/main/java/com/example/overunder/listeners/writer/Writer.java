@@ -2,6 +2,7 @@ package com.example.overunder.listeners.writer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -31,10 +32,10 @@ abstract class Writer<T extends Serializable> {
 
     protected Writer(ObjectMapper mapper) {
         this.mapper = mapper;
-        scheduler.scheduleAtFixedRate(this::queueConsumer, 10,10, TimeUnit.SECONDS);
+        scheduler.scheduleAtFixedRate(this::consume, 10,10, TimeUnit.SECONDS);
     }
 
-    private void queueConsumer() {
+    private void consume() {
 
         if(queue.isEmpty()) {
             return;
@@ -91,5 +92,9 @@ abstract class Writer<T extends Serializable> {
         log.info("Events written to {}", LOG_PATH);
     }
 
-
+    @PreDestroy
+    void prepareDestroySystem(){
+        scheduler.shutdown();
+        consume();
+    }
 }
